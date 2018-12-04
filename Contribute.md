@@ -4,7 +4,7 @@
 
 ## template
 
-```
+```md
 # Daily Hacker News by USER_NAME
 
 ## ARTICLE_NAME
