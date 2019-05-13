@@ -39,12 +39,12 @@ l = get_best_news(dr)
 
 
 @app.route('/')
-async def test(request):
+async def main_news(request):
     return json(l)
 
 
-@app.route('/renew')
-async def test(request):
+@app.route('/reload')
+async def reload_news(request):
     l = get_best_news(dr)
     return json(
         {"reload news": "seccess"}
