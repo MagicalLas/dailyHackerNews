@@ -6,7 +6,7 @@ from sanic.response import json
 
 BEST_NEWS_URL = "https://news.ycombinator.com/best"
 NEWS_TABLE_XPATH = """//*[@id="hnmain"]/tbody/tr[3]/td/table/tbody"""
-
+history = []
 
 def create_webdriver(path="./chromedriver.exe", wait=3):
     driver = webdriver.Chrome(path)
@@ -27,8 +27,11 @@ def get_best_news(driver):
     article_links = body.find_elements_by_class_name("storylink")
     for i in range(len(titles)):
         title = processing_title(titles[i].text)
-        print(title)
         link = article_links[i].get_attribute('href')
+        if link in history:
+            title = "[NEW]" + title
+        else:
+            history.append(link)
         links[title] = link
     return links
 
