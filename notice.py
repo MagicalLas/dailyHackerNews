@@ -1,11 +1,12 @@
 from selenium import webdriver
 from functools import reduce
 
-BEST_NEWS_URL = "https://news.ycombinator.com/best"
-NEWS_TABLE_XPATH = """'//*[@id="hnmain"]/tbody/tr[3]/td/table/tbody'"""
+from sanic import Sanic
+from sanic.response import json
 
-driver = create_webdriver()
-get_best_news(driver)
+BEST_NEWS_URL = "https://news.ycombinator.com/best"
+NEWS_TABLE_XPATH = """//*[@id="hnmain"]/tbody/tr[3]/td/table/tbody"""
+
 
 def create_webdriver(path="./chromedriver.exe", wait=3):
     driver = webdriver.Chrome(path)
@@ -30,3 +31,24 @@ def get_best_news(driver):
         link = article_links[i].get_attribute('href')
         links[title] = link
     return links
+
+
+app = Sanic()
+dr = create_webdriver()
+l = get_best_news(dr)
+
+
+@app.route('/')
+async def test(request):
+    return json(l)
+
+
+@app.route('/renew')
+async def test(request):
+    l = get_best_news(dr)
+    return json(
+        {"reload news": "seccess"}
+    )
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8000)
