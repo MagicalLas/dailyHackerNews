@@ -30,10 +30,7 @@ def get_best_news(driver):
     for i in range(len(titles)):
         title = processing_title(titles[i].text)
         link = article_links[i].get_attribute('href')
-        if link in history:
-            title = "[NEW]" + title
-        else:
-            history.append(link)
+        history.append(link)
         links[title] = link
     return links
 
@@ -42,8 +39,13 @@ def dict_to_html(articles):
     keys = articles.keys()
     result_html = ""
     for key in keys:
-        result_html += HTML_FORMAT.format(
-            title=key, url=articles[key])
+        if not articles[key] in history:
+            result_html += HTML_FORMAT.format(
+            title="[NEW]"+key, url=articles[key])
+        else:
+            result_html += HTML_FORMAT.format(
+            title="[NEW]"+key, url=articles[key])
+
     return "<ol>{html}</ol>".format(html=result_html)
 
 
