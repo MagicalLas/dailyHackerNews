@@ -2,11 +2,13 @@ from selenium import webdriver
 from functools import reduce
 
 from sanic import Sanic
-from sanic.response import json
+from sanic.response import json, html
 
 BEST_NEWS_URL = "https://news.ycombinator.com/best"
 NEWS_TABLE_XPATH = """//*[@id="hnmain"]/tbody/tr[3]/td/table/tbody"""
+HTML_FORMAT = "<li><a href='{url}'>{title}</a><li>"
 history = []
+
 
 def create_webdriver(path="./chromedriver.exe", wait=3):
     driver = webdriver.Chrome(path)
@@ -16,7 +18,7 @@ def create_webdriver(path="./chromedriver.exe", wait=3):
 
 def processing_title(title):
     words = title.split()[1:-1]
-    return reduce(lambda x, y: x + " " + y, words, "")
+    return reduce(lambda x, y: x + " " + y, words)
 
 
 def get_best_news(driver):
@@ -36,6 +38,14 @@ def get_best_news(driver):
     return links
 
 
+def dict_to_html(articles):
+    keys = articles.keys()
+    result_html = ""
+    for key in keys:
+        result_html += HTML_FORMAT.format(
+            title=key, url=articles[key])
+    return "<ol>{html}</ol>".format(html=result_html)
+
 app = Sanic()
 dr = create_webdriver()
 l = get_best_news(dr)
@@ -43,7 +53,7 @@ l = get_best_news(dr)
 
 @app.route('/')
 async def main_news(request):
-    return json(l)
+    return html(dict_to_html(l))
 
 
 @app.route('/reload')
