@@ -46,6 +46,7 @@ def dict_to_html(articles):
             title=key, url=articles[key])
     return "<ol>{html}</ol>".format(html=result_html)
 
+
 app = Sanic()
 dr = create_webdriver()
 l = get_best_news(dr)
