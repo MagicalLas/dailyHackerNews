@@ -5,6 +5,7 @@ from sanic import Sanic
 from sanic.response import json, html
 
 BEST_NEWS_URL = "https://news.ycombinator.com/best"
+ACTIVE_NEWS_URL = "https://news.ycombinator.com/active"
 NEWS_TABLE_XPATH = """//*[@id="hnmain"]/tbody/tr[3]/td/table/tbody"""
 HTML_FORMAT = "<li><a href='{url}'>{title}</a><li>"
 history = []
@@ -24,6 +25,22 @@ def processing_title(title):
 def get_best_news(driver):
     links = dict()
     driver.get(BEST_NEWS_URL)
+    body = driver.find_element_by_xpath(NEWS_TABLE_XPATH)
+    titles = body.find_elements_by_class_name("athing")
+    article_links = body.find_elements_by_class_name("storylink")
+    for i in range(len(titles)):
+        title = processing_title(titles[i].text)
+        link = article_links[i].get_attribute('href')
+        if not link in history:
+            title = "[NEW]" + title
+        history.append(link)
+        links[title] = link
+    return links
+
+
+def get_active_news(driver):
+    links = dict()
+    driver.get(ACTIVE_NEWS_URL)
     body = driver.find_element_by_xpath(NEWS_TABLE_XPATH)
     titles = body.find_elements_by_class_name("athing")
     article_links = body.find_elements_by_class_name("storylink")
@@ -60,6 +77,7 @@ async def main_news(request):
 async def reload_news(request):
     global l
     l = get_best_news(dr)
+    l.update(get_active_news(dr))
     return json(
         {"reload news": "seccess"}
     )
