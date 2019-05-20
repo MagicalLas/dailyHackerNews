@@ -7,7 +7,7 @@ from sanic.response import json, html
 BEST_NEWS_URL = "https://news.ycombinator.com/best"
 ACTIVE_NEWS_URL = "https://news.ycombinator.com/active"
 NEWS_TABLE_XPATH = """//*[@id="hnmain"]/tbody/tr[3]/td/table/tbody"""
-HTML_FORMAT = "<li><a href='{url}'>{title}</a><li>"
+HTML_FORMAT = "<li><a href='{url}'>{title}</a></li>"
 history = []
 
 dr = create_webdriver()
