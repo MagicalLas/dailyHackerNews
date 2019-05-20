@@ -47,7 +47,7 @@ def get_processed_links(titles, article_links):
         link = get_link_from_eliment(article_links[i])
         if is_new_link(link):
             title = change_new_title(title)
-        history.append(link)
+        history.append(link) # recode link
         links[title] = link
     return links
 
